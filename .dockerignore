@@ -1,0 +1,19 @@
+#Git
+.git
+.gitignore
+
+#Docker
+.docker
+
+# Python
+app/__pycache__/
+app/*/__pycache__/
+app/*/*/__pycache__/
+app/*/*/*/__pycache__/
+.env/
+.venv/
+venv/
+
+#python creates cache which could be for our OS not alpine which can cause problems
+#** specify sub directory
+#avoid venv locally from the context,since we have a venv in docker

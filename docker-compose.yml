@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+      # - dev-static-data:/vol/web
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    #context . means our root/current directory
+    #port mapping how we connect to our server when we want to
+    #volumes is mapping directories from our system to the docker container,we add this so
+    #the update to the code locally to be reflected in our running container so we dont
+    #have to rebuild the container for our code and we can sync them together.
+    #command,command to run the service which we can override with docker compose.
