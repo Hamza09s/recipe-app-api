@@ -13,6 +13,28 @@ services:
       # - dev-static-data:/vol/web
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+      - DEBUG=1
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+      #for local machine only dont hardcore for deployment
+
+volumes:
+  dev-db-data:
+
     #context . means our root/current directory
     #port mapping how we connect to our server when we want to
     #volumes is mapping directories from our system to the docker container,we add this so

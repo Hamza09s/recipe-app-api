@@ -19,13 +19,18 @@ EXPOSE 8000
 ARG DEV=false
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
+    apk add --update --no-cache --virtual .tmp-build-deps \ 
+    #groups packages in one group to delete later in tmp
+    build-base postgresql-dev musl-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
     then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \ 
     #end of if command,for when the dev mode is on,helps save space and don't have to worry
-    #aboit devlopment dependencies when you don't have them installed in your image 
+    #about devlopment dependencies when you don't have them installed in your image 
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     adduser \
     --disabled-password \
     --no-create-home \
@@ -85,8 +90,8 @@ USER django-user
 #we have dev require file for when we build image and don't need it to run the project
 #we use docker compose because it builds via docker file and tags 
 #appropriately
-#we will need to configure flake file to stop it from liniting some files as default
-#django files have aalot of errors in it so it can cause issues.and app linting to code we
+#we will need to configure flake file to stop it from linting some files as default
+#django files have alot of errors in it so it can cause issues,and app linting to code we
 #create only,put it in app not in root otherwise file won't be picked up.
 #Most files in .flake8 besides pychache are auto genrated by django
 #docker-compose run --rm app sh -c "flake8"
@@ -100,9 +105,10 @@ USER django-user
 #docker-compose up;docker command for starting ourservices and see stuff in browser.
 
 #for .github/workflows/checks.yml file on:push so when we git commit any changes it pushes
-#file,for jobs we run test lint id of job so we might need to reference it so we ca run
+#file,for jobs we run test lint id of job so we might need to reference it so we can run
 #jobs in certain order,runs on is runner on which we run our job on e.g os like ubuntu,steps 
 #this action is used to login into docker and you can reuse actions,with will pass info into
 #docker,checkout to make code available for testing,linting , not done by default since
 #alot of actions require no code. 
 #docker compose is default in ubuntu runner so no need to install it in image again
+#docker-compose run --rm app sh -c "python manage.py test"
