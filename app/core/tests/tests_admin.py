@@ -11,7 +11,8 @@ class AdminSiteTests(TestCase):
     """Tests for Django admin."""
 
     def setUp(self):
-        """Create user and client;also camelcase because thats how lib names its methods"""
+        """Create user and client;also camelcase because thats 
+        how lib names its methods"""
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
             email='admin@example.com',
@@ -27,7 +28,8 @@ class AdminSiteTests(TestCase):
     def test_users_lists(self):
         """Test that users are listed on page."""
         url = reverse(
-            'admin:core_user_changelist')  # determines which url we will pull from
+            'admin:core_user_changelist')  # determines which
+        # url we will pull from
         # django admin,shows lists of users in page
         # http get request,because of force login it will
         res = self.client.get(url)
@@ -36,7 +38,8 @@ class AdminSiteTests(TestCase):
 
         self.assertContains(res, self.user.name)
         self.assertContains(res, self.user.email)
-        # it will check if it has user name and email because these are the 2 list
+        # it will check if it has user name and email
+        # because these are the 2 list
         # fields we want displayed on the page
 
     def test_edit_user_page(self):

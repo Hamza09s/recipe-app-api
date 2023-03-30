@@ -76,4 +76,5 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_superuser)
         # superuser and staff will allow you to have
         self.assertTrue(user.is_staff)
-        # access to everything in django admin,staff used to login to django admin
+        # access to everything in django admin,staff
+        # used to login to django admin
