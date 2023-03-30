@@ -62,3 +62,18 @@ class ModelTests(TestCase):
         #  Therefore, to ensure consistency and avoid confusion,
         # the email address should be normalized to a standard format,
         #  such as all lowercase letters.
+    def test_new_user_without_email_raises_error(self):
+        """Test that creating a user without an email raises a ValueError."""
+        with self.assertRaises(ValueError):
+            get_user_model().objects.create_user('', 'test123')
+
+    def test_create_superuser(self):
+        """Test creating a superuser."""
+        user = get_user_model().objects.create_superuser(
+            'test@example.com',
+            'test123',
+        )
+        self.assertTrue(user.is_superuser)
+        # superuser and staff will allow you to have
+        self.assertTrue(user.is_staff)
+        # access to everything in django admin,staff used to login to django admin
