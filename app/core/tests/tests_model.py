@@ -58,4 +58,7 @@ class ModelTests(TestCase):
         # addresses are case-insensitive. Different email providers
         # may handle
         # capitalization differently, but they all treat the same email
-        # address with different capitalization as equivalent. Therefore, to ensure consistency and avoid confusion, the email address should be normalized to a standard format, such as all lowercase letters.
+        # address with different capitalization as equivalent.
+        #  Therefore, to ensure consistency and avoid confusion,
+        # the email address should be normalized to a standard format,
+        #  such as all lowercase letters.
