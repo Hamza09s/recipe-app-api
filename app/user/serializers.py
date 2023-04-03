@@ -25,23 +25,26 @@ class UserSerializer(serializers.ModelSerializer):
         # we want the data to be read/write only
         # write means they can only write the password not write it
 
-        def create(self, validated_data):
-            """Create and return a user with encrypted password."""
-            return get_user_model().objects.create_user(**validated_data)
+    def create(self, validated_data):
+        """Create and return a user with encrypted password."""
+        return get_user_model().objects.create_user(**validated_data)
     # override create from serializer so only create if validation is passed
 
-        def update(self, instance, validated_data):
-            """Update and return user."""
-            password = validated_data.pop('password', None)
-            # basically checks if user has passed password to be updated
-            user = super().update(instance, validated_data)
-            # model instance,validated data that has passed serializer
+    def update(self, instance, validated_data):
+        """Update and return user."""
+        password = validated_data.pop('password', None)
+        # basically checks if user has passed password to be updated
+        user = super().update(instance, validated_data)
+        # model instance,validated data that has passed serializer
+        # we are overriding here because default behavior is sending
+        # clear text not hashed passwords also model instance means
+        # get_user_model()
 
-            if password:
-                user.set_password(password)
-                user.save()
+        if password:
+            user.set_password(password)
+            user.save()
 
-            return user
+        return user
 
 
 class AuthTokenSerializer(serializers.Serializer):

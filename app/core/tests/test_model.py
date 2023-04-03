@@ -2,9 +2,14 @@
 Tests for models.
 """
 
-
+from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+
+from core import models
+# we didn't have to do this for user because
+# we imported get_user_model,so if we want to test other models
+# we are gonna use them directly
 
 
 class ModelTests(TestCase):
@@ -78,3 +83,21 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_staff)
         # access to everything in django admin,staff
         # used to login to django admin
+
+    def test_create_recipe(self):
+        """Test creating a recipe is successful."""
+        user = get_user_model().objects.create_user(
+            'test@example.com',
+            'testpass123',
+        )
+        # we are creating user to assign to our recipe object
+        recipe = models.Recipe.objects.create(
+            user=user,
+            title='Sample recipe name',
+            time_minutes=5,
+            price=Decimal('5.50'),
+            description='Sample receipe description.',
+        )
+        # best practice is to use int not decimal/float values because they
+        # can cause issues during calculations;for a financial app
+        self.assertEqual(str(recipe), recipe.title)
