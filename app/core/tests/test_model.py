@@ -96,7 +96,7 @@ class ModelTests(TestCase):
             title='Sample recipe name',
             time_minutes=5,
             price=Decimal('5.50'),
-            description='Sample receipe description.',
+            description='Sample recipe description.',
         )
         # best practice is to use int not decimal/float values because they
         # can cause issues during calculations;for a financial app

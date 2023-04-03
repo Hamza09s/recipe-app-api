@@ -4,7 +4,8 @@ Database models.
 # import uuid
 # import os
 
-# from django.conf import settings
+from django.conf import settings
+
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -59,12 +60,17 @@ class Recipe(models.Model):
     # user to whom the recipe belongs to
     # we are using foreign key because this allows us to
     # set up a relationship with another model
+    # settings.auth if we ever change it don't have to change it
+    # through the code base
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    # text can hold more content
     time_minutes = models.IntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return self.title
+    # returns string representation of the object
+    # if you don't specify this the django admin wil show id
