@@ -76,6 +76,8 @@ class Recipe(models.Model):
     # returns string representation of the object
     # if you don't specify this the django admin wil show id
 
+# test_db wasn't destroyed last time as migrations weren't applied
+
 
 class Tag(models.Model):
     """Tag for filtering recipes."""

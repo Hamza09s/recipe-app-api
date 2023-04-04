@@ -15,7 +15,7 @@ router = DefaultRouter()
 router.register('recipes', views.RecipeViewSet)
 # create endpoints,all available crud methods and register endpoints
 # for them
-# router.register('tags', views.TagViewSet)
+router.register('tags', views.TagViewSet)
 # router.register('ingredients', views.IngredientViewSet)
 
 app_name = 'recipe'

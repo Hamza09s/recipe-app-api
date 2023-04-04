@@ -1,11 +1,20 @@
 """
 Views for the recipe APIs
 """
-from rest_framework import viewsets
+from rest_framework import (
+    viewsets,
+    mixins,
+    status,
+)
+# mixin is additional things you can mix in the
+# view to add in functionality
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Recipe
+from core.models import (
+    Recipe,
+    Tag,
+)
 from recipe import serializers
 
 
@@ -45,3 +54,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # the reason why we have a listview and detailview is because
         # we don't want to use unnecessary resources to show details
         # every time so we default to listview
+
+
+class TagViewSet(mixins.DestroyModelMixin, mixins.UpdateModelMixin,
+                 mixins.ListModelMixin,
+                 viewsets.GenericViewSet):
+    """Manage tags in the database."""
+    # Put Generic in last since it can override some behaviour
+    # mixin Update provides update functionality
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Filter queryset to authenticated user."""
+        return self.queryset.filter(
+            user=self.request.user
+        ).order_by('-name').distinct()
