@@ -6,20 +6,19 @@ from rest_framework import (
     mixins,
     status,
 )
+
 # mixin is additional things you can mix in the
 # view to add in functionality
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import (
-    Recipe,
-    Tag,
-)
+from core.models import Recipe, Tag, Ingredient
 from recipe import serializers
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """View for manage recipe APIs."""
+
     serializer_class = serializers.RecipeDetailSerializer
     # added detail the reason being beside for list we want to use this
     queryset = Recipe.objects.all()
@@ -32,16 +31,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Retrieve recipes for authenticated user."""
         queryset = self.queryset
-        return queryset.filter(
-            user=self.request.user
-        ).order_by('-id')
+        return queryset.filter(user=self.request.user).order_by("-id")
         # we get user by request from the authentication system
         # as we know user is authenticated
         # so we can filter recipe for the user that is authenticated
 
     def get_serializer_class(self):
         """Return the serializer class for request."""
-        if self.action == 'list':
+        if self.action == "list":
             return serializers.RecipeSerializer
         # return reference to a class not instance
         return self.serializer_class
@@ -56,20 +53,53 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # every time so we default to listview
 
 
-class TagViewSet(mixins.DestroyModelMixin, mixins.UpdateModelMixin,
-                 mixins.ListModelMixin,
-                 viewsets.GenericViewSet):
-    """Manage tags in the database."""
-    # Put Generic in last since it can override some behaviour
-    # mixin Update provides update functionality
-    serializer_class = serializers.TagSerializer
-    queryset = Tag.objects.all()
+# mixins are things you can mix in a view to add additional
+# functionality
 
+
+class BaseRecipeAttrViewSet(
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Filter queryset to authenticated user."""
-        return self.queryset.filter(
-            user=self.request.user
-        ).order_by('-name').distinct()
+        return self.queryset.filter(user=self.request.user).order_by("-name")
+
+
+class TagViewSet(BaseRecipeAttrViewSet):
+    """Manage tags in the database."""
+
+    # Put Generic in last since it can override some behaviour
+    # mixin Update provides update functionality
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    # def get_queryset(self):
+    #     """Filter queryset to authenticated user."""
+    #     return self.queryset.filter(user=self.request.user).order_by("-name").distinct()
+
+
+class IngredientViewSet(BaseRecipeAttrViewSet):
+    """Manage ingredients in the database."""
+
+    # Put Generic in last since it can override some behaviour
+    # mixin Update provides update functionality
+    serializer_class = serializers.IngredientSerializer
+    queryset = Ingredient.objects.all()
+    # tells drf what models we want manageable through
+    # ingredient viewset
+
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    # def get_queryset(self):
+    #     """Filter queryset to authenticated user."""
+    #     return self.queryset.filter(user=self.request.user).order_by("-name").distinct()
