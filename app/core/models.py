@@ -1,17 +1,34 @@
 """
 Database models.
 """
-# import uuid
-# import os
+import uuid
+import os
+
 
 from django.conf import settings
-
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
+
+
+def recipe_image_file_path(instance, filename):
+    """Generate file path for new recipe image."""
+    ext = os.path.splitext(filename)[1]
+    # extract the extension of the filename
+    filename = f"{uuid.uuid4()}{ext}"
+    # we are creating our own filename through uuid
+    # this way the upload png we keep the png extension, jpeg for
+    # jpeg
+
+    return os.path.join("uploads", "recipe", filename)
+    # this way instead of string ourselves because
+    # ensures string is created in appropriate format
+    # for the OS we are running the code on
+    # so best to use os.path.join to create paths
+    # since windows,linux can have different paths
 
 
 class UserManager(BaseUserManager):
@@ -73,6 +90,8 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     tags = models.ManyToManyField("Tag")
     ingredients = models.ManyToManyField("Ingredient")
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+    # path tp where you want to upload the path to
 
     def __str__(self):
         return self.title

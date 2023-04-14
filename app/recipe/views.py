@@ -9,6 +9,9 @@ from rest_framework import (
 
 # mixin is additional things you can mix in the
 # view to add in functionality
+
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -41,6 +44,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return serializers.RecipeSerializer
         # return reference to a class not instance
+        elif self.action == "upload_image":
+            return serializers.RecipeImageSerializer
+        # we are gonna define our custom action
         return self.serializer_class
 
     def perform_create(self, serializer):
@@ -51,6 +57,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         # the reason why we have a listview and detailview is because
         # we don't want to use unnecessary resources to show details
         # every time so we default to listview
+
+    @action(methods=["POST"], detail=True, url_path="upload-image")
+    def upload_image(self, request, pk=None):
+        """Upload an image to recipe."""
+        recipe = self.get_object()
+        serializer = self.get_serializer(recipe, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # mixins are things you can mix in a view to add additional

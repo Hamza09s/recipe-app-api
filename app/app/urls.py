@@ -20,18 +20,28 @@ from drf_spectacular.views import (
 
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/schema/', SpectacularAPIView.as_view(), name='api-schema'),
+    path("admin/", admin.site.urls),
+    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     # will generate the schema file for our project
     path(
-        'api/docs/',
-        SpectacularSwaggerView.as_view(url_name='api-schema'),
-        name='api-docs',
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="api-schema"),
+        name="api-docs",
     ),
     # will use schema above
-    path('api/user/', include('user.urls')),
-    path('api/recipe/', include('recipe.urls')),
+    path("api/user/", include("user.urls")),
+    path("api/recipe/", include("recipe.urls")),
 ]
 # include urls from different apps
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )
+# allowing our django dev server to serve media files as it
+# doesn't do so by itself
